@@ -93,11 +93,12 @@ def DrawMSA(msa, seq_names = None, start = None, end = None,
             text = ax.text(x=(j + 0.5)*lengthUnit, y=(i+0.5) * heightUnit, s=c, color="black",
                 va="center_baseline", ha="center", fontsize=fontsize, 
                 transform=ax.transAxes if axlim == None else ax.transData)
-            text.set_path_effects([PathEffects.withStroke(linewidth=2, 
+            linewidth = min(2,fontsize/50)
+            text.set_path_effects([PathEffects.withStroke(linewidth=linewidth, 
                                                          foreground='w')])
             ax.add_patch( patches.Rectangle(xy=(j * lengthUnit, i * heightUnit),
                                            width = lengthUnit, height=heightUnit,
-                                          facecolor=color_map[c], linewidth=2, edgecolor="white",
+                                          facecolor=color_map[c], linewidth=linewidth, edgecolor="white",
                                           transform=ax.transAxes if axlim == None else ax.transData))
     if (axlim == None):
         ax.set_xlim(-0.5, end - start + 1 - 0.5)
@@ -271,7 +272,7 @@ def DrawSeqLogo(msa, color_map, alphabet_size = None, start = None, end = None, 
 
 # Add the annotation for the sequence alignment
 #  annotations: a list of numbers like [['a',0,3]]: msa[0..3] (both inclusive) is annotated as the name 'a'
-def DrawAnnotation(msa, annotations, start = None, end = None, ax=None):
+def DrawAnnotation(msa, annotations, color_map=None,start = None, end = None, ax=None):
     ax = ax or plt.gca()
     fig = ax.get_figure()
     start, end = GetStartEnd(msa, start, end)
@@ -282,13 +283,13 @@ def DrawAnnotation(msa, annotations, start = None, end = None, ax=None):
     
     for a in annotations:
         text = ax.text(x=(a[1]+a[2])/2, y=0.5, s=a[0], fontsize=fontsize,
-                       va="center", ha="center", color="black")
+                       va="center", ha="center", color="black", clip_on=True)
         tbox = text.get_window_extent(text._renderer).transformed(ax.transData.inverted())
         # Draw the bracket
-        ax.plot([a[1], a[1]], [0, 1], color="black")
-        ax.plot([a[2], a[2]], [0, 1], color="black")
-        ax.plot([a[1], tbox.x0], [0.5, 0.5], color="black")
-        ax.plot([tbox.x1, a[2]], [0.5, 0.5], color="black")
+        ax.plot([a[1], a[1]], [0, 1], color="black", clip_on=True)
+        ax.plot([a[2], a[2]], [0, 1], color="black", clip_on=True)
+        ax.plot([a[1], tbox.x0], [0.5, 0.5], color="black", clip_on=True)
+        ax.plot([tbox.x1, a[2]], [0.5, 0.5], color="black", clip_on=True)
 
     ax.axis('off')
 
@@ -301,8 +302,16 @@ def DrawComplexMSA(msa, panels=[], seq_names = None, panel_height_ratios=None, p
     chunks = math.ceil((end - start + 1) / wrap)
     
     height_ratios = None
-    if (panel_height_ratios is not None):
-        height_ratios = panel_height_ratios * chunks
+    if (panel_height_ratios is None):
+        panel_height_ratios = []
+        for p in panels:
+            if (p == DrawMSA):
+                panel_height_ratios.append(len(msa))
+            elif (p == DrawAnnotation):
+                panel_height_ratios.append(0.5)
+            else:
+                panel_height_ratios.append(1)
+    height_ratios = panel_height_ratios * chunks
     fig,axes = plt.subplots(len(panels) * chunks, 1, constrained_layout=True,
                             figsize=figsize, height_ratios = height_ratios)
     
