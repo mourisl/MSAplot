@@ -19,7 +19,6 @@ import matplotlib.pyplot as plt
 from msaplot import msaplot
 
 msaplot.DrawComplexMSA(msa=["AC-GAT", "A-CGT-"],
-                color_map = msaplot.GetColorMap("dna"),
                panels=[msaplot.DrawSeqLogo, msaplot.DrawMSA, msaplot.DrawConsensusHisto])
 ```
 
