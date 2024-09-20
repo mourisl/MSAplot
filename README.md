@@ -2,7 +2,7 @@ MSAplot
 ======
 
 ### What is it?
-A Python package to visualize multiple sequence alignment (MSA). MASplot is inspired by the package [pyMSAviz](https://github.com/moshi4/pyMSAviz). The major feature of MSAplot is customizable panels for plotting MSA, seqlogo, annotation, and consensus histogram. 
+A Python package to visualize multiple sequence alignment (MSA). MASplot is inspired by the package [pyMSAviz](https://github.com/moshi4/pyMSAviz) and [ggmsa](https://yulab-smu.top/ggmsa/). The major feature of MSAplot is customizable panels for plotting MSA, seqlogo, annotation, and consensus histogram. 
 
 ### Installation
 
