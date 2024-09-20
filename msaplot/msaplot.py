@@ -44,18 +44,25 @@ def GetStartEnd(msa, start, end):
     return start, end
 
 
-def GetColorMap(msa, color_order = None, palette = None):
+def GetColorMap(preset = None, msa=None, color_order = None, palette = None):
     color_map = {}
-    if (color_order != None):
-        for i,c in enumerate(color_order):
-            color_map[c] = sns.color_palette(palette)[i]
+    if preset in ["dna", "nuc", "nucleotide"]:
+        color_map['A'] = [0,1,0]
+        color_map['C'] = [1,165/255,0]
+        color_map['G'] = [1,0,0]
+        color_map['T'] = [0.5,0.5,1]
+    else:
+        if (color_order != None):
+            for i,c in enumerate(color_order):
+                color_map[c] = sns.color_palette(palette)[i]
             
-    # The case some of the alphabet color is not specified in the order     
-    for a in msa:
-        for c in a:
-            if c not in color_map:
-                size = len(color_map)
-                color_map[c] = sns.color_palette(palette)[size]
+        # The case some of the alphabet color is not specified in the order     
+        for a in msa:
+            for c in a:
+                if c not in color_map:
+                    size = len(color_map)
+                    color_map[c] = sns.color_palette(palette)[size]
+    
     color_map['-'] = [1,1,1] # white
     color_map['.'] = [1,1,1] # white
     return color_map
@@ -79,8 +86,8 @@ def DrawMSA(msa, seq_names = None, start = None, end = None,
         fontsize = CalculateFontsize(ax.get_xlim(), ax.get_ylim(), ax, fig, height, end - start + 1)
     else:
         fontsize = CalculateFontsize(axlim[0], axlim[1], ax, fig, height, end - start + 1)
-    
-    color_map = GetColorMap(msa, color_order=None, palette=palette)
+   
+    color_map = color_map or GetColorMap(msa=msa, color_order=None, palette=palette)
     
     lengthUnit = 1 / (end - start + 1)
     heightUnit = 1 / height 
@@ -116,16 +123,18 @@ def DrawMSA(msa, seq_names = None, start = None, end = None,
                     step = candidateSteps[i - 1]
                 break
         
-        tickStart = (int)(start / step) * step + step
+        tickStart = (int)(start / step) * step + step - 1
         if (tickStart != start):
             ticks.append(0)
             tickLabels.append(start+1)
-        for i in range(start, end + 1, step):
+        for i in range(tickStart, end + 1, step):
+            if (i >= length):
+                break
             ticks.append(i - start)
             tickLabels.append(i+1)
-        if (tickLabels[-1] != end - 1):
-            ticks.append(end - start)
-            tickLabels.append(end+1)
+        if (tickLabels[-1] != min(length, end + 1)):
+            ticks.append(min(length - 1, end) - start)
+            tickLabels.append(min(length, end+1))
         ax.set_xticks(ticks, tickLabels)
         
         # Set the y
@@ -294,9 +303,9 @@ def DrawAnnotation(msa, annotations, color_map=None,start = None, end = None, ax
     ax.axis('off')
 
 # Draw multipanel MSA
-def DrawComplexMSA(msa, panels=[], seq_names = None, panel_height_ratios=None, panel_params=[], 
+def DrawComplexMSA(msa, panels=[], seq_names = None, panel_height_ratios=None, panel_params=None, 
                    color_map=None, start=None, end=None, wrap=None, figsize=None):
-    color_map = color_map or GetColorMap(msa)
+    color_map = color_map or GetColorMap(msa=msa)
     start,end = GetStartEnd(msa, start,end)
     wrap = wrap or (end - start + 1)
     chunks = math.ceil((end - start + 1) / wrap)
@@ -318,7 +327,9 @@ def DrawComplexMSA(msa, panels=[], seq_names = None, panel_height_ratios=None, p
     axidx = 0
     for i in range(start, end + 1, wrap):
         for j,func in enumerate(panels):
-            extraParam = panel_params[j].copy()
+            extraParam = {}
+            if (panel_params is not None):
+                extraParam = panel_params[j].copy()
             if func is DrawMSA:
                 extraParam['seq_names'] = seq_names
             func(msa, color_map = color_map, start=i, end=i+wrap-1,ax=axes[axidx], **extraParam)
