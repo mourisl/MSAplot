@@ -69,7 +69,8 @@ def GetColorMap(preset = None, msa=None, color_order = None, palette = None):
 
 
 def DrawMSA(msa, seq_names = None, start = None, end = None,
-            axlim = None, color_map = None, palette=None, ax=None, fig=None):
+            axlim = None, color_map = None, palette=None, ax=None, fig=None,
+            show_char=True):
     # Get the canvas attributes.
     ax = ax or plt.gca()
     
@@ -97,11 +98,12 @@ def DrawMSA(msa, seq_names = None, start = None, end = None,
     
     for i, a in enumerate(msa):
         for j,c in enumerate(a[start:end+1]):
-            text = ax.text(x=(j + 0.5)*lengthUnit, y=(i+0.5) * heightUnit, s=c, color="black",
-                va="center_baseline", ha="center", fontsize=fontsize, 
-                transform=ax.transAxes if axlim == None else ax.transData)
             linewidth = min(2,fontsize/50)
-            text.set_path_effects([PathEffects.withStroke(linewidth=linewidth, 
+            if show_char:
+                text = ax.text(x=(j + 0.5)*lengthUnit, y=(i+0.5) * heightUnit, s=c, color="black",
+                    va="center_baseline", ha="center", fontsize=fontsize, 
+                    transform=ax.transAxes if axlim == None else ax.transData)
+                text.set_path_effects([PathEffects.withStroke(linewidth=linewidth, 
                                                          foreground='w')])
             ax.add_patch( patches.Rectangle(xy=(j * lengthUnit, i * heightUnit),
                                            width = lengthUnit, height=heightUnit,
