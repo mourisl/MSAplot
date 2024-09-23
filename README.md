@@ -7,7 +7,7 @@ A Python package to visualize multiple sequence alignment (MSA). MASplot is insp
 ### Installation
 
 1. Clone the [GitHub repo](https://github.com/mourisl/msaplot), e.g. with `git clone https://github.com/mourisl/msaplot`.
-2. Copy "msaplot" folder to your project folder.
+2. Copy "msaplot" folder to your project folder or run "python3 setup.py install" to install.
 
 I will try to add msaplot to PyPi in future.
 
