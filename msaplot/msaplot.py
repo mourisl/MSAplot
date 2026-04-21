@@ -51,6 +51,30 @@ def GetColorMap(preset = None, msa=None, color_order = None, palette = None):
         color_map['C'] = [1,165/255,0]
         color_map['G'] = [1,0,0]
         color_map['T'] = [0.5,0.5,1]
+    elif preset in ["protein", "aa"]:
+        color_map = {
+            'D': [0.90, 0.04, 0.04],  # Aspartic Acid (Acidic)
+            'E': [0.90, 0.04, 0.04],  # Glutamic Acid (Acidic)
+            'K': [0.08, 0.35, 1.00],  # Lysine (Basic)
+            'R': [0.08, 0.35, 1.00],  # Arginine (Basic)
+            'H': [0.51, 0.51, 0.82],  # Histidine (Aromatic/Basic)
+            'C': [0.90, 0.90, 0.00],  # Cysteine (Sulfur)
+            'M': [0.90, 0.90, 0.00],  # Methionine (Sulfur)
+            'S': [0.98, 0.59, 0.00],  # Serine (Hydroxyl)
+            'T': [0.98, 0.59, 0.00],  # Threonine (Hydroxyl)
+            'N': [0.00, 0.86, 0.86],  # Asparagine (Amide)
+            'Q': [0.00, 0.86, 0.86],  # Glutamine (Amide)
+            'A': [0.78, 0.78, 0.78],  # Alanine (Hydrophobic)
+            'G': [0.92, 0.92, 0.92],  # Glycine (Tiny)
+            'L': [0.06, 0.51, 0.06],  # Leucine (Aliphatic)
+            'V': [0.06, 0.51, 0.06],  # Valine (Aliphatic)
+            'I': [0.06, 0.51, 0.06],  # Isoleucine (Aliphatic)
+            'F': [0.20, 0.20, 0.67],  # Phenylalanine (Aromatic)
+            'Y': [0.20, 0.20, 0.67],  # Tyrosine (Aromatic)
+            'W': [0.71, 0.35, 0.71],  # Tryptophan (Aromatic)
+            'P': [0.86, 0.59, 0.51],  # Proline (Cyclic)
+            'X': [0.75, 0.75, 0.75],  # Unknown/Other
+        }
     else:
         if (color_order != None):
             for i,c in enumerate(color_order):
